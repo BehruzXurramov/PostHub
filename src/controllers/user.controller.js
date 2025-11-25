@@ -11,9 +11,12 @@ export async function addUser(req, res, next) {
     const { error, value } = userValidation(req.body);
 
     if (error) {
-      return next(
-        new AppError(400, error.details[0].message || "Validation failed")
-      );
+      const validationErrors = error.details.map((d) => d.message);
+      return res.status(400).json({
+        status: "fail",
+        message: "Validation failed",
+        errors: validationErrors,
+      });
     }
 
     // Check if user already exists
